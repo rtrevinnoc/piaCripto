@@ -5,12 +5,12 @@ import string, math, os
 mainMenuOptions = ["a) Cifrado de César", "b) RSA", "c) Información del Programa", "d) Imprimir código fuente", "e) Salir"]
 mainMenu = TerminalMenu(mainMenuOptions)
 
-characters = list(string.printable)
-characters.remove('\t')
-characters.remove('\n')
-characters.remove('\r')
-characters.remove('\x0b')
-characters.remove('\x0c')
+characters = list(string.ascii_letters)#list(string.printable)
+# characters.remove('\t')
+# characters.remove('\n')
+# characters.remove('\r')
+# characters.remove('\x0b')
+# characters.remove('\x0c')
 
 def isPrime(number):
     for i in range(2, number):
@@ -43,7 +43,7 @@ class CesarCipher(object):
 
 class RSACipher(object):
     characters = characters
-    characters.insert(0, "®")
+    # characters.insert(0, "®")
 
     def __init__(self, p, q):
         self.p, self.q = p, q#number.getPrime(b), number.getPrime(b)
@@ -97,61 +97,101 @@ class MenuOptions(object):
 
     def Cesar(self):
         print("+++ Menu Cesar +++")
-        condition = True
-        while condition:
+        while True:
             try:
                 k = int(input("Introduce un valor de desplazamiento, k = "))
                 self.cesarCipher = CesarCipher(k)
-                condition = False
+                break
             except ValueError:
                 print("!!! Error: Introduzca un número.\n")
-                condition = True
+                continue
             except TypeError:
                 print("!!! Error: Introduzca un número.\n")
-                condition = True
+                continue
             except EOFError:
                 print("!!! Error: Introduzca un valor.\n")
-                condition = True
+                continue
+            except KeyboardInterrupt:
+                exit()
+            except:
+                print("!!! Error desconocido: .\n")
+                continue
         while True:
             selectedOption = self.cipherMenu.show()
             match selectedOption:
                 case 0:
                     text = input("Introduce el texto a encriptar: ")
-                    print(f'#=> El texto cifrado es: <<{self.cesarCipher.encrypt(text)}>>\n')
+                    try:
+                        print(f'#=> El texto cifrado es: <<{self.cesarCipher.encrypt(text)}>>\n')
+                    except ValueError:
+                        print("El carácter no esta incluido en el alfabeto.\n")
                 case 1:
                     text = input("Introduce el texto a desencriptar: ")
-                    print(f'#=> El texto plano es: <<{self.cesarCipher.decrypt(text)}>>\n')
+                    try:
+                        print(f'#=> El texto plano es: <<{self.cesarCipher.decrypt(text)}>>\n')
+                    except ValueError:
+                        print("El carácter no esta incluido en el alfabeto.\n")
                 case 2:
                     break
 
     def RSA(self):
         print("+++ Menu RSA +++")
-        condition = True
-        while condition:
-            try:
-                p = int(input("Introduce un número primo, p = "))
+        while True:
+            while True:
+                try:
+                    p = int(input("Introduce un número primo, p = "))
 
-                if not isPrime(p):
-                    print("!!! CUIDADO: Introduce un número primo.")
+                    if not isPrime(p):
+                        print("!!! CUIDADO: Introduce un número primo.")
+                        continue
+
+                    break
+                except ValueError:
+                    print("!!! Error: Introduzca un número.\n")
+                    continue
+                except TypeError:
+                    print("!!! Error: Introduzca un número.\n")
+                    continue
+                except EOFError:
+                    print("!!! Error: Introduzca un valor.\n")
+                    continue
+                except KeyboardInterrupt:
+                    exit()
+                except:
+                    print("!!! Error desconocido: .\n")
                     continue
 
-                q = int(input("Introduce otro número primo, q = "))
-
-                while (not isPrime(q)):
-                    print("!!! CUIDADO: Introduce un número primo.")
+            while True:
+                try:
                     q = int(input("Introduce otro número primo, q = "))
 
+                    if not isPrime(q):
+                        print("!!! CUIDADO: Introduce un número primo.")
+                        continue
+
+                    break
+                except ValueError:
+                    print("!!! Error: Introduzca un número.\n")
+                    continue
+                except TypeError:
+                    print("!!! Error: Introduzca un número.\n")
+                    continue
+                except EOFError:
+                    print("!!! Error: Introduzca un valor.\n")
+                    continue
+                except KeyboardInterrupt:
+                    exit()
+                except:
+                    print("!!! Error desconocido.\n")
+                    continue
+
+            try:
                 self.rsaCipher = RSACipher(p, q)
-                condition = False
-            except ValueError:
-                print("!!! Error: Introduzca un número.\n")
-                condition = True
-            except TypeError:
-                print("!!! Error: Introduzca un número.\n")
-                condition = True
-            except EOFError:
-                print("!!! Error: Introduzca un valor.\n")
-                condition = True
+                break
+            except UnboundLocalError:
+                print("!!! Error desconocido. Reintente. \n")
+                continue
+
         while True:
             selectedOption = self.cipherMenu.show()
             match selectedOption:
@@ -159,11 +199,14 @@ class MenuOptions(object):
                     text = input("Introduce el texto a encriptar: ")
                     try:
                         print(f'#=> El texto cifrado es: <<{self.rsaCipher.encrypt(text)}>>\n')
-                    except ValueError as error:
-                        print(error, "\n")
+                    except ValueError:
+                        print("El carácter no esta incluido en el alfabeto.\n")
                 case 1:
                     text = input("Introduce el texto a desencriptar: ")
-                    print(f'#=> El texto plano es: <<{self.rsaCipher.decrypt(text)}>>\n')
+                    try:
+                        print(f'#=> El texto plano es: <<{self.rsaCipher.decrypt(text)}>>\n')
+                    except ValueError:
+                        print("El carácter no esta incluido en el alfabeto.\n")
                 case 2:
                     break
 

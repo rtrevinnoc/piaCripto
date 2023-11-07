@@ -12,6 +12,12 @@ characters.remove('\r')
 characters.remove('\x0b')
 characters.remove('\x0c')
 
+def isPrime(number):
+    for i in range(2, number):
+        if (number % i) == 0:
+            return False
+    return True
+
 class CesarCipher(object):
     characters = characters
 
@@ -124,7 +130,17 @@ class MenuOptions(object):
         while condition:
             try:
                 p = int(input("Introduce un número primo, p = "))
+
+                if not isPrime(p):
+                    print("!!! CUIDADO: Introduce un número primo.")
+                    continue
+
                 q = int(input("Introduce otro número primo, q = "))
+
+                while (not isPrime(q)):
+                    print("!!! CUIDADO: Introduce un número primo.")
+                    q = int(input("Introduce otro número primo, q = "))
+
                 self.rsaCipher = RSACipher(p, q)
                 condition = False
             except ValueError:

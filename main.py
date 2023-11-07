@@ -58,6 +58,8 @@ class RSACipher(object):
         else:
             self.d = x
 
+        self.pad_length = len(str(self.n))
+
         print(f'#=> Llave pública: {self.e, self.n}')
         print(f'#=> Llave privada: {self.d, self.n}')
 
@@ -74,16 +76,11 @@ class RSACipher(object):
         return old_x
 
     def encrypt(self, text):
-        message_number = int("".join([str(characters.index(x)).zfill(2) for x in text]))
-        if (message_number > self.n):
-            print(f'!!! CUIDADO: El mensaje es mayor que N ({message_number} > {self.n})')
-        return pow(message_number, self.e, mod=self.n)
+        return "".join([str(pow(self.characters.index(x), self.e, mod=self.n)).zfill(self.pad_length) for x in text])
 
     def decrypt(self, text):
-        plain = str(pow(int(text), self.d, mod=self.n))
-        rev_text = plain[::-1]
-        rev_original = [rev_text[i:i+2][::-1] for i in range(0, len(plain), 2)]
-        return "".join([self.characters[int(x)] for x in reversed(rev_original)])
+        encrypted_numbers = [int(x) for x in map(''.join, zip(*[iter(text)]*self.pad_length))]
+        return "".join([self.characters[pow(number, self.d, mod=self.n)] for number in encrypted_numbers])
 
 class MenuOptions(object):
     cipherMenuOptions = ["a) Encriptar", "b) Desencriptar", "d) Regresar"]
@@ -144,7 +141,10 @@ class MenuOptions(object):
             match selectedOption:
                 case 0:
                     text = input("Introduce el texto a encriptar: ")
-                    print(f'#=> El texto cifrado es: <<{self.rsaCipher.encrypt(text)}>>\n')
+                    try:
+                        print(f'#=> El texto cifrado es: <<{self.rsaCipher.encrypt(text)}>>\n')
+                    except ValueError as error:
+                        print(error, "\n")
                 case 1:
                     text = input("Introduce el texto a desencriptar: ")
                     print(f'#=> El texto plano es: <<{self.rsaCipher.decrypt(text)}>>\n')
@@ -188,4 +188,7 @@ def main():
                 exit()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        exit()

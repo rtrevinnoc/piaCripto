@@ -1,3 +1,10 @@
+### AUTOR ###
+## Nombre: Roberto Treviño Cervantes
+## Matricula: 1915003
+## Grupo: 32
+## Carrera: Ciencias Computacionales
+## Semestre: Séptimo
+
 #!/usr/bin/env python3
 from simple_term_menu import TerminalMenu
 import string, math, os
